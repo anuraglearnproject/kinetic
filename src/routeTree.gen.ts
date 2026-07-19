@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as publicLoginRouteImport } from './routes/(public)/login'
 import { Route as publicSignupRouteImport } from './routes/(public)/signup'
 import { Route as ProtectedAuthRouteImport } from './routes/protected/_auth'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const publicLoginRoute = publicLoginRouteImport.update({
+  id: '/(public)/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const publicSignupRoute = publicSignupRouteImport.update({
@@ -31,30 +37,39 @@ const ProtectedAuthRoute = ProtectedAuthRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof publicLoginRoute
   '/signup': typeof publicSignupRoute
   '/protected': typeof ProtectedAuthRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof publicLoginRoute
   '/signup': typeof publicSignupRoute
   '/protected': typeof ProtectedAuthRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/(public)/login': typeof publicLoginRoute
   '/(public)/signup': typeof publicSignupRoute
   '/protected/_auth': typeof ProtectedAuthRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/signup' | '/protected'
+  fullPaths: '/' | '/login' | '/signup' | '/protected'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/signup' | '/protected'
-  id: '__root__' | '/' | '/(public)/signup' | '/protected/_auth'
+  to: '/' | '/login' | '/signup' | '/protected'
+  id:
+    | '__root__'
+    | '/'
+    | '/(public)/login'
+    | '/(public)/signup'
+    | '/protected/_auth'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  publicLoginRoute: typeof publicLoginRoute
   publicSignupRoute: typeof publicSignupRoute
   ProtectedAuthRoute: typeof ProtectedAuthRoute
 }
@@ -66,6 +81,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(public)/login': {
+      id: '/(public)/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof publicLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(public)/signup': {
@@ -87,6 +109,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  publicLoginRoute: publicLoginRoute,
   publicSignupRoute: publicSignupRoute,
   ProtectedAuthRoute: ProtectedAuthRoute,
 }
